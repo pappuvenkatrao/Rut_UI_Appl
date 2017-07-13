@@ -1,0 +1,308 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "DB Designer";
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+
+        $("#errorMessages").hide();
+
+        function verifyDropDowns() {
+            var dropDownErrorsFound = false;
+            $('.dropdown-menu').each(function () {
+                if ($(this).not(':selected') && ($(this).parent().find('.dropdown-toggle').text().trim() === 'Data Type' || $(this).parent().find('.dropdown-toggle').text().trim() === 'Key Type')) {
+                    var item = $(this).parent().find('.dropdown-toggle');
+                    item.css({ "border": '#FF0000 1px solid' });
+                    dropDownErrorsFound = true;
+                }
+            });
+            return dropDownErrorsFound;
+        }
+
+        $("#upload").bind("click", function () {
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt|.sql|.xml)$/;
+            if (regex.test($("#fileUpload").val().toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var table = $("<table />");
+                        var rows = e.target.result.split("\n");
+                        $("#dvCSV").html('');
+                        
+                            for (var i = 0; ($("#fileUpload")[0].files[0].size > 10000 & (rows.length / 10) > 1000)  ? 500 : rows.length; i++) {
+                                var row = $("<tr />");
+                                var cells = rows[i].split(",");
+                                for (var j = 0; j < cells.length; j++) {
+                                    var cell = $("<td />");
+                                    cell.html(cells[j]);
+                                    row.append(cell);
+                                }
+                                table.append(row);
+                                $("#dvCSV").append(table);
+                            }
+                    }
+                    reader.readAsText($("#fileUpload")[0].files[0]);
+                } else {
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                alert("Please upload a valid CSV file.");
+            }
+        });
+
+        function verifyTextBoxs() {
+            var texterrorfound = false;
+            $("input[id*=txtColName]").each(function () {
+                if ($(this).val() === '') {
+                    $(this).css({ "border": '#FF0000 1px solid' });
+                    texterrorfound = true;
+                }
+            });
+
+            $("input[id*=txtConstraint]").each(function () {
+                if ($(this).val() === '') {
+                    $(this).css({ "border": '#FF0000 1px solid' });
+                    texterrorfound = true;
+                }
+            });
+
+            $("input[id*=txtColAliasName]").each(function () {
+                if ($(this).val() === '') {
+                    $(this).css({ "border": '#FF0000 1px solid' });
+                    texterrorfound = true;
+                }
+            });
+            return texterrorfound;
+        }
+
+        function resetVals() {
+            $("#dbdesigntbl > tbody > tr").each(function (index) {
+
+                $("#errorMessages").hide();
+
+                if (index !== 0) {
+                    $(this).remove();
+                }
+                if (index === 0) {
+                    $("input[id*=txtColName]").val("");
+                    $("input[id*=txtConstraint]").val("");
+                    $("input[id*=txtColAliasName]").val("");
+                    $("input[id*=txtColName]").each(function () {
+                        $(this).css({ "border": '#cccccc 1px solid' });
+                    });
+                    $("input[id*=txtConstraint]").each(function () {
+                        $(this).css({ "border": '#cccccc 1px solid' });
+                    });
+                    $("input[id*=txtColAliasName]").each(function () {
+                        $(this).css({ "border": '#cccccc 1px solid' });
+                    });
+                    $('.btn-group').find('.dropdown-toggle').css({ "border": 'transparent 1px solid' });
+                }
+            });
+        }
+
+        function displayErrorMsgs(texterrorfound, dropDownErrorsFound) {
+
+            if (texterrorfound & !dropDownErrorsFound) {
+                $("#errorMessages").show();
+                $("#dropdownBxerror").hide();
+            }
+            else if (dropDownErrorsFound & !texterrorfound) {
+                $("#errorMessages").show();
+                $("#textBxerror").hide();
+            } else if (dropDownErrorsFound & texterrorfound) {
+                $("#errorMessages").show();
+                $("#dropdownBxerror").show();
+                $("#textBxerror").show();
+            }
+            else if (!dropDownErrorsFound & !texterrorfound) {
+                $("#errorMessages").hide();
+            }
+
+        }
+
+        $(document).on('click', '.dropdown-menu li a', function () {
+            var selText = $(this).text();
+
+            $(this).parents('.btn-group').find('.dropdown-toggle').html(selText + ' <span class="caret"></span>');
+            $(this).parents('.btn-group').find('.dropdown-toggle').css({ "border": 'green 1px solid' });
+            displayErrorMsgs(verifyTextBoxs(), verifyDropDowns());
+        });
+
+        $(document).on('click', "button[id*='addbtn']", function () {
+
+            var countOfElements = $("button[id*='addbtn']").length;
+            var idNumber = countOfElements;
+
+            var str1 = '<tr> <td> <div class=' + '"button-group"' + '> <button type=' + '"button"' + 'id=' + '"addbtn' + idNumber + '"' + ' class=' + '"btn btn-success btn-xs"' + '>Add <span class=' + '"glyphicon glyphicon-plus"' + '></span></button> <button type=' + '"button"' + 'id=' + '"delbtn' + idNumber + '"' + ' class=' + '"btn btn-danger btn-xs"' + '>Delete <span class=' + '"glyphicon glyphicon-minus"' + '></span></button> </div> </td> <td> <input type=' + '"text"' + ' class=' + '"form-control"' + ' id=' + '"txtColName' + idNumber + '"' + ' placeholder=' + '"Column Name"' + ' /> </td> <td> <input type=' + '"text"' + ' class=' + '"form-control"' + ' id=' + '"txtColAliasName' + idNumber + '"' + ' placeholder=' + '"Column Alias Name"' + ' /> </td> <td> <div class=' + '"btn-group"' + '> <button class=' + '"btn dropdown-toggle"' + ' name=' + '"dpdwnDataType"' + ' data-toggle=' + '"dropdown"' + '> Data Type <span class=' + '"caret"' + '>';
+
+            var str2 = '</span></button> <ul class=' + '"dropdown-menu"' + '> <li><a href=' + '"#"' + '>int</a></li> <li><a href=' + '"#"' + '>char</a></li> <li><a href=' + '"#"' + '>varchar</a></li> <li><a href=' + '"#"' + '>varchar2</a></li> <li><a href=' + '"#"' + '>date</a></li> <li><a href=' + '"#"' + '>datetime</a></li> <li><a href=' + '"#"' + '>double</a></li> </ul> </div> </td> <td> <div class=' + '"btn-group"' + '> <button class=' + '"btn dropdown-toggle"' + ' name=' + '"dpdwnKeyType"' + ' data-toggle=' + '"dropdown"' + '> Key Type <span class=' + '"caret"' + '></span></button> <ul class=' + '"dropdown-menu"' + '> <li><a href=' + '"#"' + '>Primary</a></li> <li><a href=' + '"#"' + '>Secondary</a></li> <li><a href=' + '"#"' + '>Forigen</a></li> </ul> </div> </td> <td> <input type=' + '"text"' + ' class=' + '"form-control"' + ' id=' + '"txtConstraint' + idNumber + '"' + ' placeholder=' + '"Constraint"' + ' /> </td> </tr>';
+
+            var res = str1.concat(str2);
+
+            $("#dbdesigntbl > tbody").append(res);
+        });
+
+        $(document).on('click', "button[id*='delbtn']", function () {
+            if ($("button[id*='delbtn']").length > 2) {
+                alert('Are you sure to delete the selected Row');
+                $(this).parent().parent().parent().remove();
+            }
+
+            if ($("button[id*='delbtn']").length === 2) {
+                alert('Are you sure to delete the selected Row');
+                $(this).parent().parent().parent().remove();
+                $("button[id*='delbtn']").prop('id', "delbtn0");
+                $("button[id*='addbtn']").prop('id', "addbtn0");
+                
+            }
+        });
+
+        $(document).on('keyup', "input[id*=txtColName]", function () {
+            $(this).css({ "border": 'green 1px solid' });
+            displayErrorMsgs(verifyTextBoxs(), verifyDropDowns());
+        });
+
+        $(document).on('keyup', "input[id*=txtConstraint]", function () {
+            $(this).css({ "border": 'green 1px solid' });
+            displayErrorMsgs(verifyTextBoxs(), verifyDropDowns());
+        });
+
+        $(document).on('keyup', "input[id*=txtColAliasName]", function () {
+            $(this).css({ "border": 'green 1px solid' });
+
+            displayErrorMsgs(verifyTextBoxs(), verifyDropDowns());
+        });
+
+        $("#save").click(function () {
+            var texterrorfound = false;
+            var dropDownErrorsFound = false;
+
+            texterrorfound = verifyTextBoxs();
+
+            dropDownErrorsFound = verifyDropDowns();
+
+            //if ($('.dropdown-menu li a option:selected').length === 0) {
+            //     alert('nothing selected');
+            //}
+            displayErrorMsgs(texterrorfound, dropDownErrorsFound);
+            if (texterrorfound === false && dropDownErrorsFound === false) {
+                alert('Table Created Sucessfully!');
+                $("#errorMessages").hide();
+                resetVals();
+            }
+        });
+
+
+
+        $("#reset").click(function () {
+            resetVals();
+        });
+    });
+
+
+
+</script>
+
+<div class="container">
+    <table class="table" id="dbdesigntbl">
+        <thead>
+            <tr>
+                <th></th>
+                <th> Column Name </th>
+                <th> Column Alias Name </th>
+                <th> Data Type </th>
+                <th> Key Type </th>
+                <th> Constraint </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="button-group">
+                        <button type="button" id="addbtn0" class="btn btn-success btn-xs">Add <span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" id="delbtn0" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-minus"></span></button>
+                    </div>
+
+                </td>
+                <td>
+                    <input type="text" class="form-control" id="txtColName0" placeholder="Column Name" />
+                </td>
+                <td>
+                    <input type="text" class="form-control" id="txtColAliasName0" placeholder="Column Alias Name" />
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn dropdown-toggle" name="dpdwnDataType" data-toggle="dropdown">
+                            Data Type
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">int</a></li>
+                            <li><a href="#">char</a></li>
+                            <li><a href="#">varchar</a></li>
+                            <li><a href="#">varchar2</a></li>
+                            <li><a href="#">date</a></li>
+                            <li><a href="#">datetime</a></li>
+                            <li><a href="#">double</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn dropdown-toggle" name="dpdwnKeyType" data-toggle="dropdown">
+                            Key Type
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Primary</a></li>
+                            <li><a href="#">Secondary</a></li>
+                            <li><a href="#">Forigen</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <input type="text" class="form-control" id="txtConstraint0" placeholder="Constraint" />
+                </td>
+            </tr>
+        </tbody>
+
+        @*<tfoot class="col-md-offset-3 text-center">
+            <tr>
+                <td>
+
+                </td>
+            </tr>
+            </tfoot>*@
+
+
+    </table>
+    <div class="text-center">
+        <button id="save" class="btn btn-success">Save</button>
+        <button id="reset" class="btn btn-danger">Reset</button>
+    </div>
+    <div class="row"></div>
+    <div id="errorMessages" class="text-center">
+        <ul>
+            <li class="text-danger" id="textBxerror">
+                All Text Box fields are mandatory to fill
+            </li>
+            <li class="text-danger" id="dropdownBxerror">
+                All DropDown fields are mandatory to fill
+            </li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <input type="file" id="fileUpload" class="btn btn-primary"/>
+        <input type="button" id="upload" class="btn btn-primary" value="Upload"/>
+    </div>
+
+    <div id="dvCSV">
+
+    </div>
+</div>
+
