@@ -208,66 +208,72 @@
 </script>
 
 <div class="container">
+    <div class="row">
+        <div class="row">
+            
+        </div>
+        <input type="text" class="form-control" id="txtTableName" placeholder="Table Name"/>
+    </div>
     <table class="table" id="dbdesigntbl">
         <thead>
-            <tr>
-                <th></th>
-                <th> Column Name </th>
-                <th> Column Alias Name </th>
-                <th> Data Type </th>
-                <th> Key Type </th>
-                <th> Constraint </th>
-            </tr>
+        <tr>
+            <th></th>
+            <th> Column Name </th>
+            <th> Column Alias Name </th>
+            <th> Data Type </th>
+            <th> Key Type </th>
+            <th> Constraint </th>
+        </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <div class="button-group">
-                        <button type="button" id="addbtn0" class="btn btn-success btn-xs">Add <span class="glyphicon glyphicon-plus"></span></button>
-                        <button type="button" id="delbtn0" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-minus"></span></button>
-                    </div>
+        <tr>
+            <td>
+                <div class="button-group">
+                    <button type="button" id="addbtn0" class="btn btn-success btn-xs">Add <span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="button" id="delbtn0" class="btn btn-danger btn-xs">Delete <span class="glyphicon glyphicon-minus"></span></button>
+                </div>
 
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="txtColName0" placeholder="Column Name" />
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="txtColAliasName0" placeholder="Column Alias Name" />
-                </td>
-                <td>
-                    <div class="btn-group">
-                        <button class="btn dropdown-toggle" name="dpdwnDataType" data-toggle="dropdown">
-                            Data Type
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">int</a></li>
-                            <li><a href="#">char</a></li>
-                            <li><a href="#">varchar</a></li>
-                            <li><a href="#">varchar2</a></li>
-                            <li><a href="#">date</a></li>
-                            <li><a href="#">datetime</a></li>
-                            <li><a href="#">double</a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <div class="btn-group">
-                        <button class="btn dropdown-toggle" name="dpdwnKeyType" data-toggle="dropdown">
-                            Key Type
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Primary</a></li>
-                            <li><a href="#">Secondary</a></li>
-                            <li><a href="#">Forigen</a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <input type="text" class="form-control" id="txtConstraint0" placeholder="Constraint" />
-                </td>
-            </tr>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="txtColName0" placeholder="Column Name"/>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="txtColAliasName0" placeholder="Column Alias Name"/>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" name="dpdwnDataType" data-toggle="dropdown">
+                        Data Type
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">int</a></li>
+                        <li><a href="#">char</a></li>
+                        <li><a href="#">varchar</a></li>
+                        <li><a href="#">varchar2</a></li>
+                        <li><a href="#">date</a></li>
+                        <li><a href="#">datetime</a></li>
+                        <li><a href="#">double</a></li>
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" name="dpdwnKeyType" data-toggle="dropdown">
+                        Key Type
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Primary</a></li>
+                        <li><a href="#">Secondary</a></li>
+                        <li><a href="#">Forigen</a></li>
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="txtConstraint0" placeholder="Constraint"/>
+            </td>
+        </tr>
         </tbody>
 
         @*<tfoot class="col-md-offset-3 text-center">
